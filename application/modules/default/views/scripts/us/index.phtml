@@ -1,0 +1,81 @@
+<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+jQuery(function($) {
+	
+	editor=CKEDITOR.replace( 'editor1',
+			{
+				skin : 'office2003'
+			});
+	
+	
+	$( '#editorcontents' ).html(editor.getData());
+	
+
+	
+	editor.destroy();
+	editor = null;
+        
+	 
+	
+}); 
+
+
+
+</script>
+<?php
+$controller_name = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+$module_name = Zend_Controller_Front::getInstance()->getRequest()->getModuleName();
+if ($module_name == 'default') {
+    $language = 'vi';
+} else if ($module_name == 'en') {
+    $language = 'en';
+} else if ($module_name == 'cn') {
+    $language = 'cn';
+}
+$db = Zend_Db_Table::getDefaultAdapter();
+$db->setFetchMode(Zend_Db::FETCH_ASSOC);
+$row = $db->fetchRow("select text_$language,id from menu where link like '%$controller_name%'");
+$text_menu=$row["text_$language"];
+$text_others = $db->fetchAll("select * from menu where parent_id IN (select parent_id from menu where link like '%$controller_name%') and id<>".$row['id']);
+
+?>
+<div class="row-fluid" style="margin-bottom: 30px;">
+    <div class="span12" id="header_div" style="text-align: center;color: #c1976c;font-size: 30px;text-transform: uppercase;">
+        <?php
+        echo $text_menu;
+        ?>
+    </div>
+</div>	
+
+<div class="row-fluid">
+    <div class="span12" id="editorcontents" style="color: white;padding-left: 20px;">
+        <textarea rows="500" cols="" id="editor1"><?php echo $this->lienHe;?></textarea>
+    </div>
+</div>	
+<div class="span4"news style="padding-left: 20px;min-width: 100px;float: right;">
+    <div style="color: #c1976c;font-size: 18px;text-transform: uppercase;margin-bottom: 20px;padding-left: 20px;">
+    <?php
+    if($language=='vi'){
+        echo 'Các bài viết liên quan';
+    }
+    else if($language=='en'){
+        echo 'Related Articles';
+    }
+    else if($language=='cn'){
+        echo '相关文章';
+    }
+    ?>
+    </div>
+    <ul>
+        <?php 
+                foreach ($text_others as $text_other){
+                    echo '<li style="list-style-type: disc;margin: 0 0 15px 15px;color: white;"><a style="color: #f8f0e6;text-decoration: none;" href="'.$this->baseUrl("/$module_name".$text_other['link']).'">'.$text_other["text_$language"].'</a></li>';
+                }
+        ?>
+    </ul>
+</div>
+
+     
+
+            
+

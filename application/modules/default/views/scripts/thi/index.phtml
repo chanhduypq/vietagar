@@ -1,0 +1,277 @@
+<?php 
+$questions=$this->questions;
+$nganhNghes=$this->nganhNghes;
+?>
+<style>
+    .btn
+        {
+            font-family: Arial;
+            padding: 5px 10px;
+            background: #333;
+            color: white;
+            margin: 5px;
+            font-size: 12px;
+            line-height: 12px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover
+        {
+            background: #666;
+        }
+        
+    .span12.question{
+        font-size: 20px;
+        color: blue;
+    }
+    .span12.answer{
+        padding-left: 100px;
+    }
+    
+    .goto{
+        
+    }
+    
+
+</style>
+<?php 
+if ($this->error!=''){?>
+<div style="color: red;text-align: center;">
+    <?php echo $this->error;?>
+</div>
+<?php 
+}
+?>
+<?php 
+if (!is_array($questions)||count($questions)==0){?>
+<form method="POST" id="form1" onsubmit="return false;">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="span4">&nbsp;</div>
+            <div class="span4" style="margin-top: 20px;">
+                <select id="nganh_nghe_id" name="nganh_nghe_id" style="width: 100%;">
+                    <option value="0">------------------Chọn ngành nghề------------------</option>
+                    <?php 
+                    foreach ($nganhNghes as $nganhNghe){?>
+                    <option value="<?php echo $nganhNghe['id'];?>"><?php echo $nganhNghe['title'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="span3" style="margin-top: 20px;">
+                <select id="level" name="level" style="width: 100%;">
+                    <option value="0">-----------Chọn cấp bậc-----------</option>
+                    <option value="<?php echo Default_Model_Question::SO_CAP;?>">Sơ cấp</option>
+                    <option value="<?php echo Default_Model_Question::TRUNG_CAP;?>">Trung cấp</option>
+                    <option value="<?php echo Default_Model_Question::CAO_CAP;?>">Cao cấp</option>
+                </select>
+            </div>
+            <div class="span1" style="margin-top: 20px;"><input type="submit" value="Bắt đầu thi" id="start"/></div>
+        </div>
+    </div>
+    
+</form>
+<?php 
+}
+?>
+<div class="row-fluid">
+    <div class="span12">&nbsp;</div>
+</div>
+<?php 
+if (is_array($questions)&&count($questions)>0){?>
+<div class="row-fluid" style="margin-bottom: 20px;">
+    <div class="span12" style="text-align: center;margin: 0 auto;font-size: 50px;">
+        <div>
+            <!--<span id="h">Giờ</span> :-->
+            <span id="m">Phút</span> :
+            <span id="s">Giây</span>
+        </div>
+    </div>
+    <!--<input type="hidden" id="h_val" value="1"/> <br/>-->
+    <input type="hidden" id="m_val" value="<?php echo count($questions)*2-$this->miniutes;?>"/> <br/>
+    <input type="hidden" id="s_val" value="00"/>
+</div>
+<div class="row-fluid" style="margin-bottom: 20px;">
+    <!--<div class="span9">&nbsp;</div>-->
+    <div class="span12" style="background-color: blanchedalmond;">
+        <?php
+        $i=1;
+        foreach ($questions as $question){?>
+            <a class="goto" href="#question_<?php echo $i;?>">
+                <?php echo $i;?>
+            </a>                            
+        <?php
+        $i++;
+        }
+        ?>
+    </div>
+    <!--<div class="span1">&nbsp;</div>-->
+
+</div>
+
+<?php
+}
+?>
+<form method="POST" onsubmit="return false;" id="form2">
+    <?php 
+    if (is_array($questions)&&count($questions)>0){?>
+        <div class="row-fluid" style="max-height: 600px;overflow-y: auto;">
+            <div class="span12">&nbsp;</div>
+            <?php 
+            $i=1;
+            foreach ($questions as $question){?>
+                <div>
+                    <div class="span12 question" id="question_<?php echo $i;?>">
+                        <?php echo $i.'/&nbsp;&nbsp;&nbsp;'.$question['content'];?>
+                    </div>
+                    <?php
+                    $answers=$question['answers'];
+                    foreach ($answers as $answer){?>
+                        <div class="span12 answer">
+                            <label>
+                                <input type="radio" name="<?php echo $question['id'];?>" value="<?php echo $answer['id'].'_'.$answer['sign'];?>"/>
+                                <?php echo $answer['sign'];?>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <?php echo $answer['content'];?>
+                            </label>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                    <input type="hidden" name="question_id[]" value="<?php echo $question['id'];?>"/>
+                    <input type="hidden" name="answer_id[]"/>
+                    <input type="hidden" name="answer_sign[]"/>
+                    <input type="hidden" name="dapan_sign[]" value="<?php echo $question['dapan_sign'];?>"/>
+                </div>
+            <?php
+            $i++;
+            }        
+            ?>
+        </div>
+    <?php 
+    }
+    if (is_array($questions)&&count($questions)>0){?>
+        <div class="span12" style="text-align: center;margin: 0 auto;">
+            <input type="hidden" name="nganh_nghe_id_form2" value="<?php echo $this->nganhNgheId;?>"/>
+            <input type="hidden" name="level_form2" value="<?php echo $this->level;?>"/>
+            <input type="submit" value="Hoàn tất" id="finish"/>
+        </div>
+    <?php 
+    }
+    ?>
+</form>
+
+<script type="text/javascript">
+    jQuery(function ($){
+        
+        $("#start").click(function (){
+           if ($("#nganh_nghe_id").val()=='0'){
+               jAlert('','Vui lòng chọn ngành nghề');
+               $("#nganh_nghe_id").focus();
+               return;
+           } 
+           if ($("#level").val()=='0'){
+               jAlert('','Vui lòng chọn cấp bậc');
+               $("#level").focus();
+               return;
+           } 
+           $("#form1").attr('onsubmit','return true');
+           $("form1").submit();
+        });
+        $("#nganh_nghe_id").val('<?php echo $this->nganhNgheId;?>');
+        $("#level").val('<?php echo $this->level;?>');
+        
+        $("#finish").click(function (){
+            if ($("input[type='radio']:checked").length==$(".span12.question").length){
+               $("#form2").attr('onsubmit','return true');
+               $("form2").submit();
+            }
+            else{
+                jAlert('',"Vui lòng trả lời đầy đủ các câu hỏi");
+            }
+        });
+        
+        $("input[type='radio']").click(function (){
+            val=$(this).val();
+            temp=val.split('_');
+            answer_id=temp[0];
+            answer_sign=temp[1];
+            $(this).parent().parent().parent().find('input[name="answer_id[]"]').eq(0).val(answer_id);
+            $(this).parent().parent().parent().find('input[name="answer_sign[]"]').eq(0).val(answer_sign);
+        });
+    });
+    
+//    var h = null; // Giờ
+    var m = null; // Phút
+    var s = null; // Giây
+ 
+    var timeout = null; // Timeout
+ 
+ start();
+    function start()
+    {
+        /*BƯỚC 1: LẤY GIÁ TRỊ BAN ĐẦU*/
+//        if (h === null)
+//        {
+//            h = parseInt(document.getElementById('h_val').value);
+//            m = parseInt(document.getElementById('m_val').value);
+//            s = parseInt(document.getElementById('s_val').value);
+//        }
+if (m === null)
+        {
+            
+            m = parseInt(document.getElementById('m_val').value);
+            s = parseInt(document.getElementById('s_val').value);
+        }
+
+        /*BƯỚC 1: CHUYỂN ĐỔI DỮ LIỆU*/
+        // Nếu số giây = -1 tức là đã chạy ngược hết số giây, lúc này:
+        //  - giảm số phút xuống 1 đơn vị
+        //  - thiết lập số giây lại 59
+        if (s === -1){
+            m -= 1;
+            s = 59;
+        }
+
+        // Nếu số phút = -1 tức là đã chạy ngược hết số phút, lúc này:
+        //  - giảm số giờ xuống 1 đơn vị
+        //  - thiết lập số phút lại 59
+//        if (m === -1){
+//            h -= 1;
+//            m = 59;
+//        }
+
+        // Nếu số giờ = -1 tức là đã hết giờ, lúc này:
+        //  - Dừng chương trình
+//        if (h == -1){
+//            clearTimeout(timeout);
+//            alert('Hết giờ');
+//            return false;
+//        }
+        if (m == -1){
+            clearTimeout(timeout);
+            jAlert('Xem như bạn chưa từng làm bài thi.<br>Vui lòng chọn lại các bước trên để thi lại nếu muốn.', 'Hết giờ.');
+            setTimeout(function (){
+                $.ajax({
+                    url:'<?php echo $this->baseUrl('/thi/unsetsessionexaming');?>',
+                    success: function (data, textStatus, jqXHR) {
+                        window.location='/thi';
+                    }
+                });                
+            },2000);
+            return false;
+        }
+
+        /*BƯỚC 1: HIỂN THỊ ĐỒNG HỒ*/
+        document.getElementById('m').innerText = m.toString();
+        document.getElementById('s').innerText = s.toString();
+
+        /*BƯỚC 1: GIẢM PHÚT XUỐNG 1 GIÂY VÀ GỌI LẠI SAU 1 GIÂY */
+        timeout = setTimeout(function(){
+            s--;
+            start();
+        }, 1000);
+    }
+</script>
