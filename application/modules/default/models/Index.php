@@ -2,7 +2,7 @@
 
 class Default_Model_Index extends Core_Db_Table_Abstract {
 
-    public $_name="nganh_nghe";    
+    public $_name="mat_hang";    
     public function __construct() {
         parent::__construct();
              
@@ -11,9 +11,22 @@ class Default_Model_Index extends Core_Db_Table_Abstract {
         $items=  $this->select("ten_mat_hang_$language")->where("ten_mat_hang_$language like '%$string%'")->limit($limit)->fetchAll();         
         return $items;
     }
-    public function getMatHangs() {                 
-        $items=  $this->select("*")->fetchAll();  
-        return $items;
+    public function getMatHangs($only_parent=true) {                 
+        $items=  $this->select("*")->where("parent_id is null")->fetchAll();  
+        if($only_parent==TRUE){
+            return $items;
+        }
+        $result=array();
+        for($i=0,$n=count($items);$i<$n;$i++){
+            $result[]=$items[$i];
+            $children=  $this->getChildren($items[$i]['id']);
+            if(is_array($children)&&count($children)>0){
+                foreach ($children as $child){
+                    $result[]=$child;
+                }
+            }
+        }
+        return $result;
     }   
     public function getMatHangsNotOneId($id,$only_parent=true) {                 
         $items=  $this->select("*")->where("parent_id is null and id <> $id")->fetchAll();  
@@ -43,7 +56,13 @@ class Default_Model_Index extends Core_Db_Table_Abstract {
         }
         return array();
     }   
-    
+    public function getChildren($parent_id) {   
+        if(!is_numeric($parent_id)){
+            return array();
+        }
+        $items=  $this->select("*")->where("parent_id=$parent_id")->fetchAll();   
+        return $items;
+    }  
     
 
 }

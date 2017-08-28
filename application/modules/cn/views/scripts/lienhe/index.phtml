@@ -1,0 +1,35 @@
+<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+jQuery(function($) {
+	
+	editor=CKEDITOR.replace( 'editor1',
+			{
+				skin : 'office2003'
+			});
+	
+	
+	$( '#editorcontents' ).html(editor.getData());
+	
+
+	
+	editor.destroy();
+	editor = null;
+        
+	 
+	
+}); 
+
+
+
+</script>
+
+<div class="row-fluid">
+    <div class="span12" id="editorcontents" style="color: white;padding-left: 20px;">
+        <textarea rows="500" cols="" id="editor1"><?php echo $this->lienHe;?></textarea>
+    </div>
+</div>	
+
+     
+
+            
+

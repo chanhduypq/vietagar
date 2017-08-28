@@ -154,7 +154,6 @@ class Core_Form extends Zend_Form
     		elseif ($column_difinition['DATA_TYPE']=='text'
     				||$column_difinition['DATA_TYPE']=='longtext'
     				||$column_difinition['DATA_TYPE']=='mediumtext'
-                        ||$column_difinition['DATA_TYPE']=='tinytext'
     				
     		)
     		{

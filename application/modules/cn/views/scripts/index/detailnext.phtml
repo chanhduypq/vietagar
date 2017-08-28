@@ -1,0 +1,223 @@
+<?php 
+Zend_Loader::loadFile('./../library/Core/Common/Image.php',null,true);
+Zend_Loader::loadFile('String.php',"./../library/Core/Common/",true);   
+$matHangs=$this->matHangs;
+$row=$this->row;
+$language=$this->language;
+$samp_type_rows=$this->samp_type_rows;
+if($language=="vi"){
+    $language_module_url="";
+}
+else{
+    $language_module_url="/$language";
+}
+?>
+<!--start slide ảnh-->
+<script type="text/javascript" src="<?php echo $this->baseUrl('/js/jquery.cycle.all.js'); ?>"></script>
+<!--end slide ảnh-->
+<style>
+    
+    .product_info_table {
+        border-bottom: 1px solid #958275;
+        width: 600px;
+    }
+
+    .product_info_table td {
+        padding: 6px 0;
+        vertical-align: top;
+        color: #f8f1e4;
+    }
+
+    .product_info_table .product_label {
+        padding-right: 20px;
+        min-width: 130px;
+        font-weight: bold;
+        width: 130px;
+    }
+    #slideshow img{
+        cursor: pointer;
+    }
+    
+</style>
+<script type="text/javascript">
+    jQuery(function($) {               
+        $("img#thumnail").parent().attr("href", $("img#thumnail").attr("src"));
+        $("img#thumnail").parent().attr("rel", "prettyPhoto"); 
+        //start slide ảnh
+        $('#slideshow').cycle({
+                    //fx: 'fade' // choose your transition type, ex: fade, scrollUp, shuffle, etc...
+                    fx:     'shuffle', 
+                    easing: 'easeOutBack', 
+                    delay:  -4000 
+        });
+        //end slide ảnh
+        $("img.same_type").click(function (){
+           window.location="<?php echo $language_module_url."/index/detailnext/id/";?>"+$(this).attr("id"); 
+        });
+        
+    });
+</script>
+
+
+<div class="row-fluid" style="margin-bottom: 100px;">
+    <div class="span12">&nbsp;</div>
+</div>
+<div class="row-fluid">    
+    <div class="span8">
+        <div class="row-fluid">
+            <div class="span4">
+                
+                <div class="row-fluid">
+                    <?php
+                    if(is_array($samp_type_rows)&&count($samp_type_rows)>0){?>
+                        <div class="span12" style="color: #c1976c;text-align: center;font-size: 15px;text-transform: uppercase;font-style: italic;">
+                            <?php
+                                if($language=="vi"){
+                                    echo 'Sản phẩm cùng loại';
+                                }
+                                else if($language=="cn"){
+                                    echo '同类产品';
+                                }
+                                else if($language=="en"){
+                                    echo 'Similar products';
+                                }
+                                ?>
+                            
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span4">&nbsp;</div>
+                            <div style="width:48px;height: 48px;" class="span4">
+                                <img style="width:48px;height: 48px;" src="<?php echo $this->baseUrl(); ?>/images/2569679-465194-arrow-down-icon-golden-isolated-on-black-background.jpg"/>
+                            </div>
+                            <div class="span4">&nbsp;</div>
+                        </div>
+                    <div class="row-fluid" style="margin-top: 50px;border-radius: 10px;border:  1px solid #c1976c;">
+                            <div class="span3">&nbsp;</div>
+                            <div id="slideshow" class="span9" style="margin-top: 5px;height: 110px;">                            
+                                    <?php                                
+                                    foreach ($samp_type_rows as $samp_type_row) {
+
+                                        Image::echoImage($this->baseUrl($samp_type_row['logo']), 100, 100,'height',array("id"=>$samp_type_row['id'],"class"=>"same_type","title"=>$samp_type_row["ten_mat_hang_$language"]));
+
+                                    }                                
+                                    ?>                                                        
+                            </div>
+                        </div>
+                        
+
+                
+                <?php
+                }
+                else{
+                    echo '&nbsp;';
+                }
+                ?>
+                </div>
+            </div>
+            <div class="span8">
+                <a>
+                <?php                                                            
+                Image::echoImage($this->baseUrl($row['logo']), 400, 400,'height',array("id"=>"thumnail"));
+                ?>
+                    </a>
+            </div>
+        </div>
+        
+
+
+        <div class="row-fluid" style="margin-top:50px;">
+            <div class="span12" style="padding-left: 20px;">
+                <table class="product_info_table">
+                <tbody><tr>
+                        <td class="product_label">
+                            <?php
+                            if($language=="vi"){
+                                echo 'Tên sản phẩm';
+                            }
+                            else if($language=="cn"){
+                                echo '产品名称';
+                            }
+                            else if($language=="en"){
+                                echo 'Product Name';
+                            }
+                            ?>
+                        </td>
+                        <td class="product_value1"><?php echo $row["ten_mat_hang_$language"];?></td>
+                    </tr>                    
+                    <tr>
+                        <td class="product_label">
+                            <?php
+                            if($language=="vi"){
+                                echo 'Mô tả sản phẩm';
+                            }
+                            else if($language=="cn"){
+                                echo '产品说明';
+                            }
+                            else if($language=="en"){
+                                echo 'Product Description';
+                            }
+                            ?>                            
+                        </td>
+                        <td class="product_value1">
+                            <p class="rtejustify">
+                                <?php echo nl2br($row["mo_ta_$language"]);?>
+                            </p>
+                                
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody></table>
+            </div>
+        </div>
+            
+            
+            
+       
+    </div>
+    <div class="span4">
+        <div class="row-fluid" style="margin-bottom: 50px;">
+            <div class="span12" style="color: #c1976c;text-align: center;">
+                <h3>
+                    <?php
+                                if($language=="vi"){
+                                    echo 'Sản phẩm khác';
+                                }
+                                else if($language=="cn"){
+                                    echo '其他产品';
+                                }
+                                else if($language=="en"){
+                                    echo 'Other Products';
+                                }
+                                ?>     
+                </h3>
+                <hr/>
+            </div>
+        </div>
+        <?php
+                
+		         for($i=0,$n=count($matHangs);$i<$n;$i++){?>
+        <div class="row-fluid" style="margin-bottom:20px;">
+            <div class="span4">
+                <a href="<?php echo $this->baseUrl("$language_module_url/index/detail/id/".$matHangs[$i]['id']);?>" style="width: 100px;height: 100px;border-radius: 80px;border: 5px solid #fff;overflow: hidden;display: block;margin: 0 auto;">
+                                    <?php                                                            
+                                    Image::echoImage($this->baseUrl($matHangs[$i]['logo']), 100, 100,'height');
+                                    ?>
+                                </a>
+            </div>
+            <div class="span8" style="margin-top: 40px;">
+                <a href="<?php echo $this->baseUrl("$language_module_url/index/detail/id/".$matHangs[$i]['id']);?>" style="color: #c1976c;text-transform: uppercase;font-size: 15px;margin-top: 10px;"><?php echo $matHangs[$i]['title_'.$language];?></a>                    
+            </div>
+        </div>
+        
+            
+                <?php             
+                         }
+                ?>
+    </div>
+</div>

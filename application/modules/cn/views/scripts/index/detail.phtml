@@ -1,0 +1,149 @@
+<script type="text/javascript">
+    jQuery(function($) {               
+        $("img#thumnail").parent().attr("href", $("img#thumnail").attr("src"));
+        $("img#thumnail").parent().attr("rel", "prettyPhoto");   
+        
+    });
+</script>
+<style>
+    .wrapper {
+        position:relative;
+        width: 100px;
+        height: 100px;        
+        
+    }
+    .text{
+        position:absolute;
+        background:rgba(0,0,0,0.5);
+        color:#fff;
+        -webkit-transform: rotate(-51deg) translate(-93px,113px);
+        -webkit-transform-origin: 0px 0px;
+        transform: rotate(-51deg) translate(-93px,113px);
+        transform-origin: 0px 0px;        
+/*        width:100%*/
+    }
+</style>
+<?php 
+Zend_Loader::loadFile('./../library/Core/Common/Image.php',null,true);
+Zend_Loader::loadFile('String.php',"./../library/Core/Common/",true);   
+$matHangs=$this->matHangs;
+$children=$this->children;
+$language=$this->language;
+if($language=="vi"){
+    $language_module_url="";
+}
+else{
+    $language_module_url="/$language";
+}
+?>
+<div class="row-fluid" style="margin-top: 30px;">
+    <div class="span8" style="text-align: center;color: #c1976c;text-transform: uppercase;font-size: 35px;">
+                <?php echo $this->title;?>
+            </div>
+</div>
+<div class="row-fluid" style="padding-left: 50px;margin-top: 20px;font-style: italic;font-size: 20px;">
+    <div class="span8" style="text-align: left;color:white;">
+                <?php echo $this->loi_gioi_thieu;?>
+            </div>
+</div>
+<div class="row-fluid" style="padding-left: 10px;">
+    <div class="span8" style="text-align: left;color: white;">
+                <?php echo nl2br($this->mo_ta);?>
+            </div>
+</div>
+
+<div class="row-fluid" style="margin-top: 30px;">  
+    
+    <div class="span8">
+        
+        <?php
+        if(is_array($children)&&count($children)>0){
+            $i=0;
+            foreach ($children as $child){
+                if($i==0||$i%2==0){
+                    echo '<div class="row-fluid" style="margin-top:30px;">';
+                }
+                if($i%2==0){
+                    
+                    echo '<div class="span2">&nbsp;</div>';
+                    echo '<div class="span4">'; 
+                    echoChild($child['id'], $child['logo'], $this,$language_module_url,$child["ten_mat_hang_$language"]);
+                    echo '</div>'; 
+                }
+                else{
+                    echo '<div class="span4">'; 
+                    echoChild($child['id'], $child['logo'], $this,$language_module_url,$child["ten_mat_hang_$language"]);
+                    echo '</div>';
+                    echo '<div class="span2">&nbsp;</div>';                    
+                }
+                if($i%2==1){
+                    echo '</div>';
+                }
+                $i++;
+            }
+            if(count($children)%2==1){
+                echo '</div>';
+            }
+        }
+        ?>
+        
+        
+
+
+       
+            
+            
+            
+       
+    </div>
+    <div class="span4">
+        <div class="row-fluid" style="margin-bottom: 50px;">
+            <div class="span12" style="color: #c1976c;text-align: center;">
+                <h3>
+                    <?php
+                                if($language=="vi"){
+                                    echo 'Sản phẩm khác';
+                                }
+                                else if($language=="cn"){
+                                    echo '其他产品';
+                                }
+                                else if($language=="en"){
+                                    echo 'Other Products';
+                                }
+                                ?>     
+                </h3>
+                <hr/>
+            </div>
+        </div>
+        
+        <?php
+                $n=count($matHangs);
+		         for($i=0;$i<$n;$i++){?>
+        <div class="row-fluid" style="margin-bottom:20px;">
+            <div class="span4">
+                <a href="<?php echo $this->baseUrl("$language_module_url/index/detail/id/".$matHangs[$i]['id']);?>" style="width: 100px;height: 100px;border-radius: 80px;border: 5px solid #fff;overflow: hidden;display: block;margin: 0 auto;">
+                                    <?php                                                            
+                                    Image::echoImage($this->baseUrl($matHangs[$i]['logo']), 100, 100,'height');
+                                    ?>
+                                </a>
+            </div>
+            <div class="span8" style="margin-top: 40px;">
+                <a href="<?php echo $this->baseUrl("$language_module_url/index/detail/id/".$matHangs[$i]['id']);?>" style="color: #c1976c;text-transform: uppercase;font-size: 15px;margin-top: 10px;"><?php echo $matHangs[$i]['title_'.$language];?></a>                    
+            </div>
+        </div>
+        
+            
+                <?php             
+                         }
+                ?>
+    </div>
+</div>
+<?php 
+function echoChild($id,$img_url,$view,$language_module_url,$ten_mat_hang){
+    $ten_mat_hang1=  String1::crop($ten_mat_hang, 25);
+    echo '<div class="text">'.$ten_mat_hang1.'</div>';    
+    echo '<a href="'.$view->baseUrl("$language_module_url/index/detailnext/id/".$id).'">';
+    Image::echoImage($view->baseUrl($img_url), 250, 250,'height',array("title"=>$ten_mat_hang));
+    echo '</a>';
+}
+?>

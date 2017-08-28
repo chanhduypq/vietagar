@@ -1,6 +1,6 @@
 <?php
 
-class IndexController extends Core_Controller_Action {
+class Cn_IndexController extends Core_Controller_Action {
 
     public function init() {
         parent::init();

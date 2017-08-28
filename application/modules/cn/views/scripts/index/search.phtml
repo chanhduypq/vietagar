@@ -1,0 +1,132 @@
+<?php 
+Zend_Loader::loadFile('String.php',"./../library/Core/Common/",true);   
+Zend_Loader::loadFile('./../library/Core/Common/Image.php',null,true);
+$matHangs=$this->matHangs;
+$language=$this->language;
+$search_text=$this->search_text;
+if($language=="vi"){
+    $language_module_url="";
+}
+else{
+    $language_module_url="/$language";
+}
+?>
+<script type="text/javascript">
+    jQuery(function ($){
+        form=$("form#form_search").clone();
+        $(form).attr("id","form_search1");
+        $(form).find("input").eq(0).val("<?php echo $search_text;?>");
+        $("div#div_form_search").append($(form));
+        $("form#form_search").remove();
+        
+        imgs = $("img");
+        for (i = 0, n = imgs.length; i < n; i++) {
+            $(imgs[i]).parent().attr("href", $(imgs[i]).attr("src"));
+            $(imgs[i]).parent().attr("rel", "prettyPhoto");
+        }
+        
+    })
+</script>
+
+<form method="post" action="<?php echo $this->url();?>">
+
+    
+    <div class="row-fluid">
+        <div class="span12">
+            <div id="div_form_search" style="float: right;min-width: 200px;"></div>
+        </div>        
+    </div>
+    <div class="row-fluid">
+        <div class="span5">&nbsp;</div>
+        <div class="span7" style="font-size: 20px;color: #c1976c;text-transform: uppercase;">
+            <?php
+            if($language=='vi'){
+                echo 'Kết quả tìm kiếm';
+            }
+            else if($language=='cn'){
+                echo '搜索结果';
+            }
+            else if($language=='en'){
+                echo 'Search results';
+            }
+            ?>
+        </div>        
+    </div>
+        
+
+			<?php
+			$n=count($matHangs);
+		         for($i=0;$i<$n;$i++){                                                    
+                             				                                        
+                            $mo_ta=String1::crop($matHangs[$i]['mo_ta_'.$language],100);
+					?>
+    <div class="row-fluid" style="padding-left: 20px;">
+                                    <div class="span12">
+                                        
+                                        <a style="margin-right: 20px;min-height: 50px;height: 50px;">
+                                            <?php                                                            
+                                            Image::echoImage($this->baseUrl($matHangs[$i]['logo']), 50, 50,'height');
+                                            ?>
+                                        </a>
+                                        <a href="<?php echo $this->baseUrl().$language_module_url.'/index/detail/id/'.$matHangs[$i]['id'];?>" id="<?php echo $matHangs[$i]["id"];?>" style="text-decoration: none;color: #c1976c;font-style: italic;font-size: 15px;text-transform: uppercase;"><?php echo $matHangs[$i]['ten_mat_hang_'.$language];?></a>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span1">&nbsp;</div>
+                                    <div class="span11" style="color: white;">
+                                        <p>
+                                            <?php echo nl2br($mo_ta);?>
+                                        </p>
+
+                                    </div>
+                                </div>
+
+				
+				
+			
+
+			<?php     
+		         }
+                         if(count($matHangs)==0){?>
+    <div class="row-fluid">
+        <div class="span12" style="text-align: center;color: red;font-size: 20px;font-style: italic;">
+            <?php
+            if($language=="vi"){
+                echo "Không có kết quả nào";
+            }
+            else if($language=="en"){
+                echo "No results";
+            }
+            else if($language=="cn"){
+                echo "没有结果";
+            }
+            ?>
+        </div>
+    </div>
+                             
+    <?php
+                         }
+		         ?>
+		
+    <div class="row-fluid">
+        <div class="span12">
+            <?php                                               
+            if($this->total>$this->limit){?>
+            <table>
+                <tfoot>
+					<tr>
+                                            <td colspan="3" style="width: 100%;"><?php echo $this->paginationControl($this->paginator, 'Sliding',array('_partials/paginator.phtml','default')); ?></td>
+					</tr>
+                </tfoot>
+            </table>
+            <?php
+            }
+            ?>
+        </div>
+    </div>
+
+        <input type="hidden" name="search_text" value="<?php echo $search_text;?>" />
+		<input type="hidden" name="old_search_text" value="<?php echo $search_text;?>" />
+	
+
+</form>
